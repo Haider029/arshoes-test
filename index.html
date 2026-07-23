@@ -7,47 +7,22 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { background: #000; overflow: hidden; font-family: -apple-system, sans-serif; }
-
     #loading {
       position: fixed; inset: 0; background: #0D1B35;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       z-index: 100; transition: opacity 0.5s;
     }
-    #progress-bar {
-      width: 200px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden;
-    }
-    #progress-fill {
-      height: 100%; background: linear-gradient(90deg, #C9963A, #E8B85A);
-      border-radius: 2px; transition: width 0.3s; width: 0%;
-    }
+    #progress-bar { width: 200px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; margin-top: 24px; }
+    #progress-fill { height: 100%; background: linear-gradient(90deg, #C9963A, #E8B85A); border-radius: 2px; transition: width 0.3s; width: 0%; }
     #progress-text { color: rgba(255,255,255,0.4); font-size: 12px; margin-top: 12px; }
-
     #app { position: fixed; inset: 0; display: none; }
-
-    video {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      object-fit: cover;
-    }
-
-    canvas#overlay {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      pointer-events: none;
-    }
-
-    canvas#three {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      pointer-events: none;
-    }
-
+    video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    canvas#overlay { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    canvas#three   { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
     #header {
-      position: absolute; top: 0; left: 0; right: 0;
-      padding: 16px 20px;
+      position: absolute; top: 0; left: 0; right: 0; padding: 16px 20px;
       display: flex; align-items: center; justify-content: space-between;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
-      z-index: 10;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent); z-index: 10;
     }
     #brand { display: flex; align-items: center; gap: 8px; }
     #brand-icon {
@@ -60,10 +35,8 @@
     #brand-name span { color: #E8B85A; }
     #status-badge {
       font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px;
-      background: rgba(201,150,58,0.2); color: #E8B85A;
-      border: 1px solid rgba(201,150,58,0.4);
+      background: rgba(201,150,58,0.2); color: #E8B85A; border: 1px solid rgba(201,150,58,0.4);
     }
-
     #detection-status {
       position: absolute; top: 80px; left: 50%; transform: translateX(-50%);
       z-index: 10; text-align: center; white-space: nowrap;
@@ -72,66 +45,45 @@
       display: inline-flex; align-items: center; gap: 6px;
       padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 600;
       background: rgba(0,0,0,0.5); color: white;
-      border: 1px solid rgba(255,255,255,0.15);
-      backdrop-filter: blur(8px); transition: all 0.3s;
+      border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(8px); transition: all 0.3s;
     }
-    #detection-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: #6B7A99; transition: background 0.3s;
-    }
+    #detection-dot { width: 6px; height: 6px; border-radius: 50%; background: #6B7A99; transition: background 0.3s; }
     .detected #detection-badge { background: rgba(45,106,79,0.5); border-color: rgba(82,183,136,0.4); }
     .detected #detection-dot  { background: #52B788; animation: pulse 1s infinite; }
-    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
-
+    @keyframes pulse { 0%,100%{opacity:1;}50%{opacity:0.4;} }
     #shoe-selector {
       position: absolute; bottom: 100px; left: 0; right: 0;
-      display: flex; gap: 12px; padding: 0 20px;
-      overflow-x: auto; z-index: 10; scrollbar-width: none;
+      display: flex; gap: 12px; padding: 0 20px; overflow-x: auto; z-index: 10; scrollbar-width: none;
     }
     #shoe-selector::-webkit-scrollbar { display: none; }
     .shoe-option {
-      flex-shrink: 0; width: 72px; height: 72px;
-      border-radius: 16px; border: 2px solid rgba(255,255,255,0.2);
-      background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
+      flex-shrink: 0; width: 72px; height: 72px; border-radius: 16px;
+      border: 2px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      cursor: pointer; transition: all 0.2s;
-      font-size: 10px; color: rgba(255,255,255,0.7); gap: 4px;
+      cursor: pointer; transition: all 0.2s; font-size: 10px; color: rgba(255,255,255,0.7); gap: 4px;
     }
     .shoe-option span { font-size: 28px; }
-    .shoe-option.active {
-      border-color: #C9963A; background: rgba(201,150,58,0.2);
-      box-shadow: 0 0 20px rgba(201,150,58,0.3);
-    }
-
+    .shoe-option.active { border-color: #C9963A; background: rgba(201,150,58,0.2); box-shadow: 0 0 20px rgba(201,150,58,0.3); }
     #bottom-bar {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      padding: 16px 20px 32px;
+      position: absolute; bottom: 0; left: 0; right: 0; padding: 16px 20px 32px;
       background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
-      display: flex; align-items: center; justify-content: space-between;
-      z-index: 10;
+      display: flex; align-items: center; justify-content: space-between; z-index: 10;
     }
     #hint { font-size: 12px; color: rgba(255,255,255,0.5); max-width: 200px; line-height: 1.4; }
     #capture-btn {
       width: 56px; height: 56px; border-radius: 50%;
       background: linear-gradient(135deg, #C9963A, #E8B85A);
-      border: none; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 24px; box-shadow: 0 4px 20px rgba(201,150,58,0.4);
-      transition: transform 0.2s;
+      border: none; cursor: pointer; font-size: 24px;
+      box-shadow: 0 4px 20px rgba(201,150,58,0.4); transition: transform 0.2s;
     }
     #capture-btn:active { transform: scale(0.92); }
-
-    #fps-counter {
-      position: absolute; top: 80px; right: 20px;
-      font-size: 11px; color: rgba(255,255,255,0.3); z-index: 10;
-    }
+    #fps-counter { position: absolute; top: 80px; right: 20px; font-size: 11px; color: rgba(255,255,255,0.3); z-index: 10; }
     #model-status {
       position: absolute; bottom: 160px; left: 50%; transform: translateX(-50%);
       font-size: 11px; color: rgba(255,255,255,0.5); z-index: 10;
       background: rgba(0,0,0,0.4); padding: 4px 12px; border-radius: 12px;
       backdrop-filter: blur(8px); white-space: nowrap;
     }
-
     #snapshot {
       display: none; position: fixed; inset: 0; z-index: 200;
       background: rgba(0,0,0,0.9); flex-direction: column;
@@ -139,54 +91,41 @@
     }
     #snapshot img { max-width: 90vw; max-height: 70vh; border-radius: 16px; }
     #snapshot-btns { display: flex; gap: 12px; }
-    .snap-btn {
-      padding: 12px 24px; border-radius: 24px; font-size: 14px;
-      font-weight: 700; border: none; cursor: pointer;
-    }
+    .snap-btn { padding: 12px 24px; border-radius: 24px; font-size: 14px; font-weight: 700; border: none; cursor: pointer; }
     #save-btn  { background: #C9963A; color: #0D1B35; }
     #close-btn { background: rgba(255,255,255,0.15); color: white; }
-
     #error {
-      display: none; position: fixed; inset: 0; z-index: 300;
-      background: #0D1B35; flex-direction: column;
-      align-items: center; justify-content: center;
+      display: none; position: fixed; inset: 0; z-index: 300; background: #0D1B35;
+      flex-direction: column; align-items: center; justify-content: center;
       gap: 16px; padding: 32px; text-align: center;
     }
     #error h2 { color: white; font-size: 22px; }
     #error p  { color: rgba(255,255,255,0.5); font-size: 14px; line-height: 1.6; }
-    #retry-btn {
-      padding: 12px 32px; border-radius: 24px;
-      background: #C9963A; color: #0D1B35;
-      font-size: 14px; font-weight: 700; border: none; cursor: pointer;
-    }
+    #retry-btn { padding: 12px 32px; border-radius: 24px; background: #C9963A; color: #0D1B35; font-size: 14px; font-weight: 700; border: none; cursor: pointer; }
   </style>
 </head>
 <body>
 
-<!-- Loading -->
 <div id="loading">
-  <div style="display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:24px;">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
     <div style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#C9963A,#E8B85A);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;color:#0D1B35;">AR</div>
     <div style="color:white;font-size:26px;font-weight:700;">AR<span style="color:#E8B85A;">Shoe</span></div>
   </div>
-  <p style="color:rgba(255,255,255,0.5);font-size:14px;margin-bottom:24px;">Loading foot detection model…</p>
+  <p style="color:rgba(255,255,255,0.5);font-size:14px;margin-top:20px;">Loading foot detection model…</p>
   <div id="progress-bar"><div id="progress-fill"></div></div>
   <div id="progress-text">Initializing…</div>
 </div>
 
-<!-- Error -->
 <div id="error">
-  <h2>Camera Access Required</h2>
-  <p>ARShoe needs camera permission to detect your feet and overlay shoes in AR.</p>
+  <h2>Something went wrong</h2>
+  <p id="error-msg">Camera access required or model failed to load.</p>
   <button id="retry-btn" onclick="location.reload()">Try Again</button>
 </div>
 
-<!-- App -->
 <div id="app">
   <video id="video" autoplay playsinline muted></video>
   <canvas id="overlay"></canvas>
   <canvas id="three"></canvas>
-
   <div id="header">
     <div id="brand">
       <div id="brand-icon">AR</div>
@@ -194,73 +133,59 @@
     </div>
     <div id="status-badge">✦ Live</div>
   </div>
-
   <div id="detection-status">
     <div id="detection-badge">
       <div id="detection-dot"></div>
       <span id="detection-text">Point camera at your feet</span>
     </div>
   </div>
-
   <div id="fps-counter"></div>
   <div id="model-status">Loading 3D shoe…</div>
-
   <div id="shoe-selector">
-    <div class="shoe-option active" data-shoe="sneaker" onclick="selectShoe(this)">
-      <span>👟</span>Sneaker
-    </div>
-    <div class="shoe-option" data-shoe="boot" onclick="selectShoe(this)">
-      <span>🥾</span>Boot
-    </div>
-    <div class="shoe-option" data-shoe="heel" onclick="selectShoe(this)">
-      <span>👠</span>Heel
-    </div>
-    <div class="shoe-option" data-shoe="loafer" onclick="selectShoe(this)">
-      <span>🥿</span>Loafer
-    </div>
+    <div class="shoe-option active" data-shoe="sneaker" onclick="selectShoe(this)"><span>👟</span>Sneaker</div>
+    <div class="shoe-option" data-shoe="boot"    onclick="selectShoe(this)"><span>🥾</span>Boot</div>
+    <div class="shoe-option" data-shoe="heel"    onclick="selectShoe(this)"><span>👠</span>Heel</div>
+    <div class="shoe-option" data-shoe="loafer"  onclick="selectShoe(this)"><span>🥿</span>Loafer</div>
   </div>
-
   <div id="bottom-bar">
     <div id="hint">Point camera at your feet to try on shoes in AR</div>
     <button id="capture-btn" onclick="captureSnapshot()">📸</button>
   </div>
 </div>
 
-<!-- Snapshot -->
 <div id="snapshot">
   <img id="snapshot-img" src="" alt="Snapshot"/>
   <div id="snapshot-btns">
-    <button class="snap-btn" id="save-btn" onclick="saveSnapshot()">💾 Save</button>
+    <button class="snap-btn" id="save-btn"  onclick="saveSnapshot()">💾 Save</button>
     <button class="snap-btn" id="close-btn" onclick="closeSnapshot()">✕ Close</button>
   </div>
 </div>
 
-<!-- ONNX Runtime (non-module) -->
+<!-- ONNX Runtime -->
 <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.18.0/dist/ort.min.js"></script>
 
-<!-- Main app as ES module -->
-<script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js';
-import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/GLTFLoader.js';
-import { DRACOLoader } from 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/DRACOLoader.js';
+<script>
+// ─── We use a dynamic import map to fix the "three" specifier error ───────────
+const THREEJS = 'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js';
+const GLTF_URL = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/GLTFLoader.js';
+const DRACO_URL = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/DRACOLoader.js';
 
-// ─── CONFIG ───────────────────────────────────────────────────────────────────
 const MODEL_URL          = 'arshoe-best-quantized.onnx';
 const INPUT_SIZE         = 640;
 const CONF_THRESH        = 0.35;
 const IOU_THRESH         = 0.45;
-const INFERENCE_INTERVAL = 120; // ms
+const INFERENCE_INTERVAL = 120;
 
-// ─── STATE ────────────────────────────────────────────────────────────────────
+let THREE, GLTFLoader, DRACOLoader;
 let session          = null;
 let shoeGroup        = null;
+let scene, camera, renderer;
 let snapshotData     = null;
 let fpsFrames        = 0;
 let fpsLast          = performance.now();
 let inferenceRunning = false;
 let lastInference    = 0;
 
-// ─── DOM ──────────────────────────────────────────────────────────────────────
 const video           = document.getElementById('video');
 const overlayCanvas   = document.getElementById('overlay');
 const overlayCtx      = overlayCanvas.getContext('2d');
@@ -274,131 +199,18 @@ const detectionText   = document.getElementById('detection-text');
 const fpsCounter      = document.getElementById('fps-counter');
 const modelStatus     = document.getElementById('model-status');
 
-// ─── THREE.JS SETUP ───────────────────────────────────────────────────────────
-const renderer = new THREE.WebGLRenderer({ canvas: threeCanvas, alpha: true, antialias: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.setClearColor(0x000000, 0);
-renderer.outputEncoding = THREE.sRGBEncoding;
-
-const scene  = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 1000);
-camera.position.set(0, 0, 5);
-
-scene.add(new THREE.AmbientLight(0xffffff, 1.2));
-const dir1 = new THREE.DirectionalLight(0xffffff, 1.5);
-dir1.position.set(5, 10, 5);
-scene.add(dir1);
-const dir2 = new THREE.DirectionalLight(0xfff0cc, 0.6);
-dir2.position.set(-5, 5, -5);
-scene.add(dir2);
-scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.8));
-
-// ─── RESIZE ───────────────────────────────────────────────────────────────────
-function resize() {
-  const w = window.innerWidth, h = window.innerHeight;
-  overlayCanvas.width  = w; overlayCanvas.height = h;
-  threeCanvas.width    = w; threeCanvas.height   = h;
-  renderer.setSize(w, h);
-  camera.aspect = w / h;
-  camera.updateProjectionMatrix();
-}
-window.addEventListener('resize', resize);
-resize();
-
-// ─── LOAD GLB SHOE ────────────────────────────────────────────────────────────
-function buildFallbackShoe() {
-  const g = new THREE.Group();
-  const mat  = (color, rough=0.4) => new THREE.MeshStandardMaterial({ color, roughness: rough });
-  const mesh = (geo, color, rough) => new THREE.Mesh(geo, mat(color, rough));
-
-  const sole = mesh(new THREE.BoxGeometry(2.2, 0.15, 0.85), 0x222222, 0.8);
-  g.add(sole);
-
-  const body = mesh(new THREE.BoxGeometry(2.0, 0.45, 0.78), 0xffffff, 0.3);
-  body.position.y = 0.3;
-  g.add(body);
-
-  const toe = mesh(new THREE.SphereGeometry(0.42, 16, 8, 0, Math.PI*2, 0, Math.PI/2), 0xffffff, 0.3);
-  toe.position.set(0.9, 0.3, 0); toe.rotation.z = -Math.PI/2;
-  g.add(toe);
-
-  const heel = mesh(new THREE.BoxGeometry(0.5, 0.55, 0.78), 0xC9963A, 0.5);
-  heel.position.set(-0.85, 0.37, 0);
-  g.add(heel);
-
-  for (let i = 0; i < 4; i++) {
-    const lace = mesh(new THREE.BoxGeometry(0.04, 0.02, 0.65), 0xdddddd);
-    lace.position.set(0.3 - i*0.22, 0.55, 0);
-    g.add(lace);
-  }
-  return g;
-}
-
-async function setupShoe() {
-  if (shoeGroup) scene.remove(shoeGroup);
-  shoeGroup = new THREE.Group();
-  shoeGroup.visible = false;
-
-  try {
-    const dracoLoader = new DRACOLoader();
-    dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/draco/');
-
-    const loader = new GLTFLoader();
-    loader.setDRACOLoader(dracoLoader);
-
-    await new Promise((resolve, reject) => {
-      loader.load('sneaker.glb', (gltf) => {
-        const model = gltf.scene;
-        const box   = new THREE.Box3().setFromObject(model);
-        const ctr   = box.getCenter(new THREE.Vector3());
-        const size  = box.getSize(new THREE.Vector3());
-        const sc    = 2.0 / Math.max(size.x, size.y, size.z);
-
-        model.position.sub(ctr);
-        model.scale.setScalar(sc);
-
-        model.traverse(c => {
-          if (c.isMesh) {
-            c.castShadow = c.receiveShadow = true;
-            if (c.material) c.material.envMapIntensity = 1.0;
-          }
-        });
-
-        shoeGroup.add(model);
-        modelStatus.textContent = '✓ Shoe loaded';
-        setTimeout(() => modelStatus.style.display = 'none', 2000);
-        resolve();
-      }, (p) => {
-        if (p.total) modelStatus.textContent = `Loading shoe… ${Math.round(p.loaded/p.total*100)}%`;
-      }, reject);
-    });
-  } catch (e) {
-    console.warn('GLB failed, using fallback:', e);
-    shoeGroup.add(buildFallbackShoe());
-    modelStatus.textContent = '⚠ Placeholder shoe';
-  }
-
-  scene.add(shoeGroup);
-}
-
-// ─── LOAD ONNX ────────────────────────────────────────────────────────────────
-async function loadModel() {
-  setProgress(20, 'Loading ONNX Runtime…');
-  ort.env.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.18.0/dist/';
-  setProgress(40, 'Downloading detection model…');
-  session = await ort.InferenceSession.create(MODEL_URL, {
-    executionProviders: ['wasm'],
-    graphOptimizationLevel: 'all',
-  });
-  setProgress(80, 'Model ready!');
-}
-
 function setProgress(pct, text) {
   progressFill.style.width = pct + '%';
   progressText.textContent = text;
 }
 
-// ─── CAMERA ───────────────────────────────────────────────────────────────────
+function showError(msg) {
+  loadingEl.style.display = 'none';
+  document.getElementById('error-msg').textContent = msg || 'Something went wrong.';
+  document.getElementById('error').style.display = 'flex';
+}
+
+// ─── CAMERA ──────────────────────────────────────────────────────────────────
 async function startCamera() {
   const tries = [
     { video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } },
@@ -414,231 +226,273 @@ async function startCamera() {
       return;
     } catch { continue; }
   }
-  throw new Error('No camera');
+  throw new Error('Camera not available. Please allow camera access and try again.');
 }
 
-// ─── PREPROCESS ───────────────────────────────────────────────────────────────
+// ─── LOAD ONNX ────────────────────────────────────────────────────────────────
+async function loadONNX() {
+  ort.env.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.18.0/dist/';
+  ort.env.wasm.numThreads = 1;
+  session = await ort.InferenceSession.create(MODEL_URL, {
+    executionProviders: ['wasm'],
+    graphOptimizationLevel: 'all',
+  });
+}
+
+// ─── THREE SETUP ─────────────────────────────────────────────────────────────
+function setupThree() {
+  renderer = new THREE.WebGLRenderer({ canvas: threeCanvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x000000, 0);
+  renderer.outputEncoding = THREE.sRGBEncoding;
+
+  scene  = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 1000);
+  camera.position.set(0, 0, 5);
+
+  scene.add(new THREE.AmbientLight(0xffffff, 1.2));
+  const d1 = new THREE.DirectionalLight(0xffffff, 1.5); d1.position.set(5,10,5); scene.add(d1);
+  const d2 = new THREE.DirectionalLight(0xfff0cc, 0.6); d2.position.set(-5,5,-5); scene.add(d2);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.8));
+}
+
+function resize() {
+  const w = window.innerWidth, h = window.innerHeight;
+  overlayCanvas.width  = w; overlayCanvas.height = h;
+  threeCanvas.width    = w; threeCanvas.height   = h;
+  if (renderer) renderer.setSize(w, h);
+  if (camera)   { camera.aspect = w / h; camera.updateProjectionMatrix(); }
+}
+window.addEventListener('resize', resize);
+
+// ─── FALLBACK SHOE ───────────────────────────────────────────────────────────
+function buildFallbackShoe() {
+  const g   = new THREE.Group();
+  const mat = (c, r=0.4) => new THREE.MeshStandardMaterial({ color: c, roughness: r });
+  const mk  = (geo, c, r) => new THREE.Mesh(geo, mat(c, r));
+
+  const sole = mk(new THREE.BoxGeometry(2.2, 0.15, 0.85), 0x222222, 0.8); g.add(sole);
+  const body = mk(new THREE.BoxGeometry(2.0, 0.45, 0.78), 0xffffff, 0.3); body.position.y=0.3; g.add(body);
+  const toe  = mk(new THREE.SphereGeometry(0.42,16,8,0,Math.PI*2,0,Math.PI/2), 0xffffff, 0.3);
+  toe.position.set(0.9,0.3,0); toe.rotation.z=-Math.PI/2; g.add(toe);
+  const heel = mk(new THREE.BoxGeometry(0.5,0.55,0.78), 0xC9963A, 0.5); heel.position.set(-0.85,0.37,0); g.add(heel);
+  for (let i=0;i<4;i++){
+    const l=mk(new THREE.BoxGeometry(0.04,0.02,0.65),0xdddddd); l.position.set(0.3-i*0.22,0.55,0); g.add(l);
+  }
+  return g;
+}
+
+// ─── LOAD GLB ────────────────────────────────────────────────────────────────
+async function setupShoe() {
+  if (shoeGroup) scene.remove(shoeGroup);
+  shoeGroup = new THREE.Group();
+  shoeGroup.visible = false;
+
+  try {
+    const draco = new DRACOLoader();
+    draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/draco/');
+    const loader = new GLTFLoader();
+    loader.setDRACOLoader(draco);
+
+    await new Promise((res, rej) => {
+      loader.load('sneaker.glb', (gltf) => {
+        const m = gltf.scene;
+        const box = new THREE.Box3().setFromObject(m);
+        const ctr = box.getCenter(new THREE.Vector3());
+        const sz  = box.getSize(new THREE.Vector3());
+        const sc  = 2.0 / Math.max(sz.x, sz.y, sz.z);
+        m.position.sub(ctr);
+        m.scale.setScalar(sc);
+        m.traverse(c => { if (c.isMesh) c.castShadow = c.receiveShadow = true; });
+        shoeGroup.add(m);
+        modelStatus.textContent = '✓ Shoe loaded';
+        setTimeout(() => modelStatus.style.display = 'none', 2000);
+        res();
+      }, (p) => {
+        if (p.total) modelStatus.textContent = `Loading shoe… ${Math.round(p.loaded/p.total*100)}%`;
+      }, rej);
+    });
+  } catch(e) {
+    console.warn('GLB failed, using fallback:', e.message);
+    shoeGroup.add(buildFallbackShoe());
+    modelStatus.textContent = '⚠ Placeholder shoe';
+    setTimeout(() => modelStatus.style.display = 'none', 3000);
+  }
+
+  scene.add(shoeGroup);
+}
+
+// ─── PREPROCESS ──────────────────────────────────────────────────────────────
 const procCanvas = document.createElement('canvas');
 procCanvas.width = procCanvas.height = INPUT_SIZE;
 const procCtx = procCanvas.getContext('2d');
 
 function preprocessFrame() {
-  const vw = video.videoWidth  || 640;
-  const vh = video.videoHeight || 480;
-  const sc = Math.min(INPUT_SIZE/vw, INPUT_SIZE/vh);
-  const sw = vw*sc, sh = vh*sc;
-  const ox = (INPUT_SIZE-sw)/2, oy = (INPUT_SIZE-sh)/2;
-
-  procCtx.fillStyle = '#808080';
-  procCtx.fillRect(0, 0, INPUT_SIZE, INPUT_SIZE);
+  const vw=video.videoWidth||640, vh=video.videoHeight||480;
+  const sc=Math.min(INPUT_SIZE/vw, INPUT_SIZE/vh);
+  const sw=vw*sc, sh=vh*sc;
+  const ox=(INPUT_SIZE-sw)/2, oy=(INPUT_SIZE-sh)/2;
+  procCtx.fillStyle='#808080'; procCtx.fillRect(0,0,INPUT_SIZE,INPUT_SIZE);
   procCtx.drawImage(video, ox, oy, sw, sh);
-
-  const d = procCtx.getImageData(0, 0, INPUT_SIZE, INPUT_SIZE).data;
-  const f = new Float32Array(3 * INPUT_SIZE * INPUT_SIZE);
-  const n = INPUT_SIZE * INPUT_SIZE;
-  for (let i = 0; i < n; i++) {
-    f[i]       = d[i*4]   / 255;
-    f[i+n]     = d[i*4+1] / 255;
-    f[i+n*2]   = d[i*4+2] / 255;
-  }
-  return { tensor: new ort.Tensor('float32', f, [1,3,INPUT_SIZE,INPUT_SIZE]), sc, ox, oy, vw, vh };
+  const d=procCtx.getImageData(0,0,INPUT_SIZE,INPUT_SIZE).data;
+  const f=new Float32Array(3*INPUT_SIZE*INPUT_SIZE), n=INPUT_SIZE*INPUT_SIZE;
+  for(let i=0;i<n;i++){ f[i]=d[i*4]/255; f[i+n]=d[i*4+1]/255; f[i+n*2]=d[i*4+2]/255; }
+  return { tensor: new ort.Tensor('float32',f,[1,3,INPUT_SIZE,INPUT_SIZE]), sc, ox, oy, vw, vh };
 }
 
-// ─── NMS ──────────────────────────────────────────────────────────────────────
-function iou(a, b) {
-  const x1 = Math.max(a[0],b[0]), y1 = Math.max(a[1],b[1]);
-  const x2 = Math.min(a[2],b[2]), y2 = Math.min(a[3],b[3]);
-  const inter = Math.max(0,x2-x1)*Math.max(0,y2-y1);
-  return inter / ((a[2]-a[0])*(a[3]-a[1]) + (b[2]-b[0])*(b[3]-b[1]) - inter);
+// ─── NMS ─────────────────────────────────────────────────────────────────────
+function iou(a,b){
+  const x1=Math.max(a[0],b[0]),y1=Math.max(a[1],b[1]),x2=Math.min(a[2],b[2]),y2=Math.min(a[3],b[3]);
+  const i=Math.max(0,x2-x1)*Math.max(0,y2-y1);
+  return i/((a[2]-a[0])*(a[3]-a[1])+(b[2]-b[0])*(b[3]-b[1])-i);
 }
-
-function nms(boxes, scores) {
-  const idx = scores.map((_,i)=>i).sort((a,b)=>scores[b]-scores[a]);
-  const keep=[], sup=new Set();
-  for (const i of idx) {
-    if (sup.has(i)) continue;
-    keep.push(i);
-    for (const j of idx) if (!sup.has(j)&&i!==j&&iou(boxes[i],boxes[j])>IOU_THRESH) sup.add(j);
-  }
+function nms(boxes,scores){
+  const idx=scores.map((_,i)=>i).sort((a,b)=>scores[b]-scores[a]);
+  const keep=[],sup=new Set();
+  for(const i of idx){ if(sup.has(i))continue; keep.push(i); for(const j of idx) if(!sup.has(j)&&i!==j&&iou(boxes[i],boxes[j])>IOU_THRESH) sup.add(j); }
   return keep;
 }
 
-// ─── POSTPROCESS ──────────────────────────────────────────────────────────────
-function postprocess(out0, sc, ox, oy, vw, vh) {
-  const d = out0.data;
-  const boxes=[], scores=[];
-  for (let i = 0; i < 8400; i++) {
-    const conf = d[4*8400+i];
-    if (conf < CONF_THRESH) continue;
-    const cx=d[0*8400+i], cy=d[1*8400+i], w=d[2*8400+i], h=d[3*8400+i];
-    boxes.push([cx-w/2, cy-h/2, cx+w/2, cy+h/2]);
-    scores.push(conf);
+// ─── POSTPROCESS ─────────────────────────────────────────────────────────────
+function postprocess(out0, sc, ox, oy, vw, vh){
+  const d=out0.data, boxes=[], scores=[];
+  for(let i=0;i<8400;i++){
+    const conf=d[4*8400+i]; if(conf<CONF_THRESH)continue;
+    const cx=d[0*8400+i],cy=d[1*8400+i],w=d[2*8400+i],h=d[3*8400+i];
+    boxes.push([cx-w/2,cy-h/2,cx+w/2,cy+h/2]); scores.push(conf);
   }
-  if (!boxes.length) return null;
-  const keep = nms(boxes, scores);
-  if (!keep.length) return null;
-
-  const b  = boxes[keep[0]];
-  const x1 = (b[0]-ox)/sc, y1=(b[1]-oy)/sc;
-  const x2 = (b[2]-ox)/sc, y2=(b[3]-oy)/sc;
-
-  return {
-    cx: (x1+x2)/2/vw, cy: (y1+y2)/2/vh,
-    bw: (x2-x1)/vw,   bh: (y2-y1)/vh,
-    score: scores[keep[0]],
-    box: [x1, y1, x2, y2],
-  };
+  if(!boxes.length)return null;
+  const keep=nms(boxes,scores); if(!keep.length)return null;
+  const b=boxes[keep[0]];
+  const x1=(b[0]-ox)/sc,y1=(b[1]-oy)/sc,x2=(b[2]-ox)/sc,y2=(b[3]-oy)/sc;
+  return { cx:(x1+x2)/2/vw, cy:(y1+y2)/2/vh, bw:(x2-x1)/vw, bh:(y2-y1)/vh, score:scores[keep[0]], box:[x1,y1,x2,y2] };
 }
 
-// ─── DRAW OVERLAY ─────────────────────────────────────────────────────────────
-function drawOverlay(det) {
-  overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
-  if (!det) return;
-
-  const W=overlayCanvas.width, H=overlayCanvas.height;
-  const vw=video.videoWidth||640, vh=video.videoHeight||480;
-  const sx=W/vw, sy=H/vh;
-  const [x1,y1,x2,y2] = [det.box[0]*sx, det.box[1]*sy, det.box[2]*sx, det.box[3]*sy];
-
-  overlayCtx.shadowColor='rgba(201,150,58,0.7)';
-  overlayCtx.shadowBlur=18;
-  overlayCtx.strokeStyle='rgba(201,150,58,0.85)';
-  overlayCtx.lineWidth=2.5;
-  overlayCtx.strokeRect(x1, y1, x2-x1, y2-y1);
-  overlayCtx.shadowBlur=0;
-
-  const cs=16;
-  overlayCtx.strokeStyle='#E8B85A'; overlayCtx.lineWidth=3;
+// ─── DRAW OVERLAY ────────────────────────────────────────────────────────────
+function drawOverlay(det){
+  overlayCtx.clearRect(0,0,overlayCanvas.width,overlayCanvas.height);
+  if(!det)return;
+  const W=overlayCanvas.width,H=overlayCanvas.height;
+  const vw=video.videoWidth||640,vh=video.videoHeight||480;
+  const sx=W/vw,sy=H/vh;
+  const [x1,y1,x2,y2]=[det.box[0]*sx,det.box[1]*sy,det.box[2]*sx,det.box[3]*sy];
+  overlayCtx.shadowColor='rgba(201,150,58,0.7)'; overlayCtx.shadowBlur=18;
+  overlayCtx.strokeStyle='rgba(201,150,58,0.85)'; overlayCtx.lineWidth=2.5;
+  overlayCtx.strokeRect(x1,y1,x2-x1,y2-y1); overlayCtx.shadowBlur=0;
+  const cs=16; overlayCtx.strokeStyle='#E8B85A'; overlayCtx.lineWidth=3;
   [[x1,y1,1,1],[x2,y1,-1,1],[x1,y2,1,-1],[x2,y2,-1,-1]].forEach(([cx,cy,dx,dy])=>{
-    overlayCtx.beginPath();
-    overlayCtx.moveTo(cx+dx*cs,cy); overlayCtx.lineTo(cx,cy); overlayCtx.lineTo(cx,cy+dy*cs);
-    overlayCtx.stroke();
+    overlayCtx.beginPath(); overlayCtx.moveTo(cx+dx*cs,cy); overlayCtx.lineTo(cx,cy); overlayCtx.lineTo(cx,cy+dy*cs); overlayCtx.stroke();
   });
-
-  overlayCtx.fillStyle='rgba(201,150,58,0.9)';
-  overlayCtx.fillRect(x1, y1-22, 90, 22);
-  overlayCtx.fillStyle='#0D1B35';
-  overlayCtx.font='bold 11px -apple-system,sans-serif';
-  overlayCtx.fillText(`Foot ${Math.round(det.score*100)}%`, x1+6, y1-7);
+  overlayCtx.fillStyle='rgba(201,150,58,0.9)'; overlayCtx.fillRect(x1,y1-22,90,22);
+  overlayCtx.fillStyle='#0D1B35'; overlayCtx.font='bold 11px -apple-system,sans-serif';
+  overlayCtx.fillText(`Foot ${Math.round(det.score*100)}%`,x1+6,y1-7);
 }
 
-// ─── POSITION SHOE ────────────────────────────────────────────────────────────
-function positionShoe(det) {
-  if (!shoeGroup) return;
-  if (!det) { shoeGroup.visible=false; return; }
-
-  const aspect = window.innerWidth / window.innerHeight;
-  const wx = (det.cx - 0.5) * 10 * aspect;
-  const wy = -(det.cy - 0.5) * 10;
-  const footW  = det.bw * 10 * aspect;
-  const shoeS  = Math.max(0.4, Math.min(3.0, footW * 1.15));
-
-  shoeGroup.position.set(wx, wy + 0.3, 0);
-  shoeGroup.scale.setScalar(shoeS);
-  shoeGroup.rotation.x = 0.2;
-  shoeGroup.rotation.y = (det.cx - 0.5) * 0.4;
-  shoeGroup.visible = true;
+// ─── POSITION SHOE ───────────────────────────────────────────────────────────
+function positionShoe(det){
+  if(!shoeGroup)return;
+  if(!det){shoeGroup.visible=false;return;}
+  const aspect=window.innerWidth/window.innerHeight;
+  const wx=(det.cx-0.5)*10*aspect, wy=-(det.cy-0.5)*10;
+  const sc=Math.max(0.4,Math.min(3.0,det.bw*10*aspect*1.15));
+  shoeGroup.position.set(wx,wy+0.3,0);
+  shoeGroup.scale.setScalar(sc);
+  shoeGroup.rotation.x=0.2;
+  shoeGroup.rotation.y=(det.cx-0.5)*0.4;
+  shoeGroup.visible=true;
 }
 
-// ─── INFERENCE ────────────────────────────────────────────────────────────────
-async function runInference() {
-  if (inferenceRunning || !session || video.readyState < 2) return;
-  inferenceRunning = true;
-  try {
-    const { tensor, sc, ox, oy, vw, vh } = preprocessFrame();
-    const res = await session.run({ images: tensor });
-    const det = postprocess(res.output0, sc, ox, oy, vw, vh);
-
-    drawOverlay(det);
-    positionShoe(det);
-
-    if (det) {
+// ─── INFERENCE ───────────────────────────────────────────────────────────────
+async function runInference(){
+  if(inferenceRunning||!session||video.readyState<2)return;
+  inferenceRunning=true;
+  try{
+    const {tensor,sc,ox,oy,vw,vh}=preprocessFrame();
+    const res=await session.run({images:tensor});
+    const det=postprocess(res.output0,sc,ox,oy,vw,vh);
+    drawOverlay(det); positionShoe(det);
+    if(det){
       detectionStatus.classList.add('detected');
-      detectionText.textContent = `Foot detected — ${Math.round(det.score*100)}% confidence`;
+      detectionText.textContent=`Foot detected — ${Math.round(det.score*100)}% confidence`;
     } else {
       detectionStatus.classList.remove('detected');
-      detectionText.textContent = 'Point camera at your feet';
-      if (shoeGroup) shoeGroup.visible = false;
+      detectionText.textContent='Point camera at your feet';
+      if(shoeGroup)shoeGroup.visible=false;
     }
-  } catch(e) { console.error('Inference:', e); }
-  inferenceRunning = false;
+  }catch(e){console.error('Inference:',e);}
+  inferenceRunning=false;
 }
 
-// ─── RENDER LOOP ──────────────────────────────────────────────────────────────
-function renderLoop(ts) {
+// ─── RENDER LOOP ─────────────────────────────────────────────────────────────
+function renderLoop(ts){
   requestAnimationFrame(renderLoop);
-
   fpsFrames++;
-  if (ts - fpsLast > 1000) {
-    fpsCounter.textContent = `${fpsFrames} FPS`;
-    fpsFrames=0; fpsLast=ts;
-  }
-
-  if (ts - lastInference > INFERENCE_INTERVAL) {
-    lastInference = ts;
-    runInference();
-  }
-
-  if (shoeGroup && shoeGroup.visible) shoeGroup.rotation.y += 0.006;
-
-  renderer.render(scene, camera);
+  if(ts-fpsLast>1000){fpsCounter.textContent=`${fpsFrames} FPS`;fpsFrames=0;fpsLast=ts;}
+  if(ts-lastInference>INFERENCE_INTERVAL){lastInference=ts;runInference();}
+  if(shoeGroup&&shoeGroup.visible)shoeGroup.rotation.y+=0.006;
+  if(renderer)renderer.render(scene,camera);
 }
 
-// ─── SHOE SELECTOR ────────────────────────────────────────────────────────────
-window.selectShoe = (el) => {
+// ─── SHOE SELECTOR ───────────────────────────────────────────────────────────
+window.selectShoe=(el)=>{
   document.querySelectorAll('.shoe-option').forEach(o=>o.classList.remove('active'));
   el.classList.add('active');
   setupShoe();
 };
 
-// ─── SNAPSHOT ─────────────────────────────────────────────────────────────────
-window.captureSnapshot = () => {
-  const snap = document.createElement('canvas');
+// ─── SNAPSHOT ────────────────────────────────────────────────────────────────
+window.captureSnapshot=()=>{
+  const snap=document.createElement('canvas');
   snap.width=window.innerWidth; snap.height=window.innerHeight;
-  const ctx = snap.getContext('2d');
-
-  const vw=video.videoWidth, vh=video.videoHeight;
-  const sc=Math.max(snap.width/vw, snap.height/vh);
-  ctx.drawImage(video, (snap.width-vw*sc)/2, (snap.height-vh*sc)/2, vw*sc, vh*sc);
-  ctx.drawImage(overlayCanvas, 0, 0);
-  ctx.drawImage(threeCanvas, 0, 0);
-
-  ctx.fillStyle='rgba(201,150,58,0.95)';
-  ctx.fillRect(16, snap.height-44, 96, 28);
+  const ctx=snap.getContext('2d');
+  const vw=video.videoWidth,vh=video.videoHeight;
+  const sc=Math.max(snap.width/vw,snap.height/vh);
+  ctx.drawImage(video,(snap.width-vw*sc)/2,(snap.height-vh*sc)/2,vw*sc,vh*sc);
+  ctx.drawImage(overlayCanvas,0,0); ctx.drawImage(threeCanvas,0,0);
+  ctx.fillStyle='rgba(201,150,58,0.95)'; ctx.fillRect(16,snap.height-44,96,28);
   ctx.fillStyle='#0D1B35'; ctx.font='bold 13px -apple-system';
-  ctx.fillText('✦ ARShoe', 24, snap.height-24);
-
-  snapshotData = snap.toDataURL('image/jpeg', 0.92);
-  document.getElementById('snapshot-img').src = snapshotData;
-  document.getElementById('snapshot').style.display = 'flex';
+  ctx.fillText('✦ ARShoe',24,snap.height-24);
+  snapshotData=snap.toDataURL('image/jpeg',0.92);
+  document.getElementById('snapshot-img').src=snapshotData;
+  document.getElementById('snapshot').style.display='flex';
 };
+window.saveSnapshot =()=>{const a=document.createElement('a');a.href=snapshotData;a.download='arshoe.jpg';a.click();};
+window.closeSnapshot=()=>{document.getElementById('snapshot').style.display='none';};
 
-window.saveSnapshot  = () => { const a=document.createElement('a'); a.href=snapshotData; a.download='arshoe.jpg'; a.click(); };
-window.closeSnapshot = () => { document.getElementById('snapshot').style.display='none'; };
-
-// ─── INIT ─────────────────────────────────────────────────────────────────────
-async function init() {
-  try {
-    setProgress(5, 'Requesting camera…');
+// ─── INIT ────────────────────────────────────────────────────────────────────
+async function init(){
+  try{
+    setProgress(5,'Requesting camera…');
     await startCamera();
 
-    setProgress(15, 'Loading detection model…');
-    await loadModel();
+    setProgress(15,'Importing Three.js…');
+    const threeModule = await import(THREEJS);
+    THREE = threeModule;
+    const gltfModule  = await import(GLTF_URL);
+    GLTFLoader  = gltfModule.GLTFLoader;
+    const dracoModule = await import(DRACO_URL);
+    DRACOLoader = dracoModule.DRACOLoader;
 
-    setProgress(90, 'Loading 3D shoe…');
+    setProgress(30,'Setting up 3D renderer…');
+    setupThree();
+    resize();
+
+    setProgress(40,'Downloading detection model (3.5MB)…');
+    await loadONNX();
+
+    setProgress(80,'Loading 3D shoe…');
     await setupShoe();
 
-    setProgress(100, 'Ready!');
-    await new Promise(r => setTimeout(r, 400));
-
-    loadingEl.style.opacity = '0';
-    setTimeout(() => loadingEl.style.display='none', 500);
-    appEl.style.display = 'block';
-
+    setProgress(100,'Ready!');
+    await new Promise(r=>setTimeout(r,400));
+    loadingEl.style.opacity='0';
+    setTimeout(()=>loadingEl.style.display='none',500);
+    appEl.style.display='block';
     requestAnimationFrame(renderLoop);
-  } catch(e) {
-    console.error('Init:', e);
-    document.getElementById('error').style.display = 'flex';
+
+  }catch(e){
+    console.error('Init error:',e);
+    showError(e.message);
   }
 }
 
